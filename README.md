@@ -13,7 +13,7 @@ Slowloris is wildly effective and we'll use it to attack a stock Apache install 
 ## Getting Started
 
 Begin by [installing Docker](https://docs.docker.com/engine/installation/) (Community Edition) and [Git](https://www.atlassian.com/git/tutorials/install-git) if you have not already done so. Navigate to a folder you would like to store the project in and run the following in the command line:
-P
+
 ```bash
 git clone https://github.com/brannondorsey/SlowLoris
 cd SlowLoris
@@ -23,19 +23,19 @@ Next, we are going to download and run the stock [Apache httpd docker container]
 
 ```bash
 # runs the container in the background, serves at localhost port 8888, and shares 
-# the www/ with the docker container to be served
+# the dummy www/ with the docker container to be served
 docker run -d --name apache -p 8888:80 -v "$PWD/www":/usr/local/apache2/htdocs/ httpd:2.4
 ```
 
-I've included a template website (from [htmltemplates.net](http://www)) in `www/` that will be served by the docker container. This website will be the target service. Once you've launched the docker container navigate your browser to [http://localhost:8888](http://localhost:8888) to view the target site.
+I've included a dummy website (from [htmltemplates.net](http://www)) in `www/` that will be served by the docker container. This website will be the target service we wish to bring down. Once you've launched the docker container navigate your browser to [http://localhost:8888](http://localhost:8888) to view the target site.
 
 ![target website](www/images/site_up.png)
 
 ## DoSing Apache
 
-We will be using a python implementation of Slowloris that was originally authored by [wal99d](https://github.com/wal99d/SlowLoris). I've updated that implementation to be a bit easier to use and require no external python dependencies.
+We will be using a python implementation of Slowloris that was originally authored by [wal99d](https://github.com/wal99d/SlowLoris). I've [updated](https://github.com/brannondorsey/SlowLoris) that implementation to be a bit easier to use and require no external python dependencies.
 
-To launch DoS attack on our target run:
+To launch a Slowloris DoS attack on our target, run:
 
 ```bash
 # raise the number of simultaneously open files allowed by our OS
@@ -47,15 +47,15 @@ Here we are opening 30,000 concurrent connections to our target. You should see 
 
 ![slowloris output](www/images/slowloris_output.png)
 
-With any luck, our target service should now be down.
+With any luck, our target service should now be down. h͍͎͕̤̲͕͉̾̀̃̉̒̊a̗͇̬̼̔ͅc̨̞͇̮̟̄ͤk̮̓͌͂̆͡ ͂ͯͤ̄͏̞̠̤̰̹t͉̠̖̞̫̲̓ͥh̛̦͈͕̐̆̓̓è̹ͥ̄͊́ ̤̅̒p̱̜̟̬̻̦̫̊ͪ̚l̗̖̟͍̩͈̏͛ͤͅạ͎͓̀͒́n̤̪̘̘̫̰̗ͧ͋̇̊ͧ͂̅͜ḙ̹̝̝̤͎̓͊͂̏̋t̟̬̮͙̱ͭ̓͌ͨ̚!̲͓͍ͨ̂͊͞
 
 [![the system is down](www/images/site_down.png)](https://www.youtube.com/watch?v=Day3oxR9Efk)
 
-30,000 concurrent connections is an arbitrary value that I've found empirically to work well to down Apache running on my (somewhat beefy) machine. Depending on the service you are attacking, you may need to raise that number (or attack from multiple machines). By default, unix-like machines often have a ceiling to the allowed number of simultaneously open files (`1024` by default). We temporarily set this number to the maximum with `ulimit -n 65536`.
+30,000 concurrent connections is an arbitrary value that I've found empirically to work well to down Apache running on my (somewhat beefy) machine. Depending on the service you are attacking, you may need to raise that number (or attack from multiple machines). By default, unix-like machines often have a ceiling to the allowed number of simultaneously open files (`1024` by default). We temporarily set this number to the maximum with `ulimit -n 65536` before executing `slowloris.py`.
 
 ![cpu usage](www/images/cpu_usage.png)
 
-Persisting thousands of socket connections is a fairly computationally expensive task, so don't be surprised to see your CPU usage spike while running `slowloris.py`. Above is an image of my CPU history running on a 4.2GHz Quad Core i7 processor. For full `slowloris.py` usage information, see below:
+Persisting thousands of socket connections is a fairly computationally expensive task, so don't be surprised to see your CPU usage spike while running `slowloris.py`. Above is an image of my CPU history while running a Slowloris attack from a 4.2GHz Quad Core i7 processor. For full `slowloris.py` usage information, see below:
 
 ```
 usage: slowloris.py [-h] -i HOST -p PORT [-s MAX_SOCKETS]
@@ -77,13 +77,13 @@ optional arguments:
 
 ## Preventing Attacks
 
-Apache, and other thread-based web servers, are by their very nature vulnerable to Slowloris attacks. Event-based servers like the popular Nginx and lighttpd do not suffer from the same limitation and are not vulnerable to this kind of DoS attack. There are techniques and mods that can be used to configure an Apache server to be made less-vulnerable to slowloris. If you are currently running an Apache server see the defense links in the _resources_ section below for several tutorials to protecting your server against Slowloris attacks.
+Apache, and other thread-based web servers, are by their very nature vulnerable to Slowloris attacks. Event-based servers like the popular Nginx and lighttpd do not suffer from the same limitation and are not vulnerable to this kind of DoS attack. There are techniques and mods that can be used to configure an Apache server to be made less-vulnerable to slowloris. If you are currently running an Apache server, see the defense links in the [_resources_ section](#resources) below for several tutorials to protecting your server against Slowloris attacks.
 
 ## Going Further
 
-Over the course of learning about Slowloris I came across a [node.js implementation](https://github.com/timseverien/slowloris-dos) that got me thinking: Could Slowloris be written to work in the browser using XMLHTTPRequests? And if so, what a nefarious distributed attack! Consider if someone hosted minified/obfiscated Slowloris JavaScript code that ran silently in your browser whenever you visited their website (or better yet, a website that they infected to serve their malicious `.js` code). If such a site received heavy traffic, potentially thousands of clients could be connected at once, all DDoSing targets without their knowledge (and without having infected their machines with a virus). Think browser as botnet.
+Over the course of learning about Slowloris I came across a [node.js implementation](https://github.com/timseverien/slowloris-dos) that got me thinking: Could Slowloris be written to work in the browser using XMLHTTPRequests? And if so, what a nefarious distributed attack! Consider if someone hosted minified/obfiscated Slowloris JavaScript code that ran silently in your browser whenever you visited their website (or better yet, a website that they infected to serve their malicious `.js` code). If such a site received heavy traffic, potentially thousands of clients could be connected at once, all DDoSing targets without their operator's knowledge (and without having infected their machines with a downloadable virus). Think browser as botnet.
 
-I haven't had a chance to test this theory yet but hope to soon. If anyone else is interested in working on this, drop me a line. 
+I haven't had a chance to test this theory yet but I hope to soon. If anyone else is interested in working on this, drop me a line. 
 
 ## Resources
 
