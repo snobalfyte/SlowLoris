@@ -1,6 +1,6 @@
 # Attacking Apache Servers From a Single Machine
 
-This README matches the contents of a Medium post by the same name.
+This README matches the contents of a [Medium post](https://medium.com/@brannondorsey/d%CC%B6dos-apache-servers-from-a-single-machine-f23e91f5d28) by the same name.
 
 Distributed denial-of-service (DDoS) attacks are dependable, age-old, methods of bringing down remote computers and the services they provide. Attacks come in [many shapes and sizes](https://en.wikipedia.org/wiki/Denial-of-service_attack#Attack_techniques) and have been seemingly more frequent and [damaging recently](https://en.wikipedia.org/wiki/2016_Dyn_cyberattack). DDoS is effective because it leverages the bandwidth and throughput of thousands of machines, all under a single attacker's control as a botnet, to target a machine or network. The barrier-to-entry to perform DDoS attacks is control of enough machines to overpower your target. Sure, botnets can be purchased through forums and marketplaces on the darknet, but what if you wanted to DoS a server using only a single machine from the comfort of your own home (if you do this, be sure to ~~use a trusted VPN.~~ ~~use an offshore server purchase with Bitcoin.~~ wear a condom).
 
@@ -27,7 +27,7 @@ Next, we are going to download and run the stock [Apache httpd docker container]
 docker run -d --name apache -p 8888:80 -v "$PWD/www":/usr/local/apache2/htdocs/ httpd:2.4
 ```
 
-I've included a dummy website (from [htmltemplates.net](http://www)) in `www/` that will be served by the docker container. This website will be the target service we wish to bring down. Once you've launched the docker container navigate your browser to [http://localhost:8888](http://localhost:8888) to view the target site.
+I've included a dummy website (from [htmltemplates.net](http://www.htmltemplates.net)) in `www/` that will be served by the docker container. This website will be the target service we wish to bring down. Once you've launched the docker container navigate your browser to [http://localhost:8888](http://localhost:8888) to view the target site.
 
 ![target website](www/images/site_up.png)
 
@@ -77,11 +77,11 @@ optional arguments:
 
 ## Preventing Attacks
 
-Apache, and other thread-based web servers, are by their very nature vulnerable to Slowloris attacks. Event-based servers like the popular Nginx and lighttpd do not suffer from the same limitation and are not vulnerable to this kind of DoS attack. There are techniques and mods that can be used to configure an Apache server to be made less-vulnerable to slowloris. If you are currently running an Apache server, see the defense links in the [_resources_ section](#resources) below for several tutorials to protecting your server against Slowloris attacks.
+Apache, and other thread-based web servers, are by their very nature vulnerable to Slowloris attacks. Event-based servers like the popular Nginx and lighttpd do not suffer from the same limitation and are not vulnerable to this kind of DoS attack. There are techniques and mods that can be used to configure an Apache server to be made less-vulnerable to Slowloris. If you are currently running an Apache server, see the defense links in the [_resources_ section](#resources) below for several tutorials to protecting your server against Slowloris attacks.
 
 ## Going Further
 
-Over the course of learning about Slowloris I came across a [node.js implementation](https://github.com/timseverien/slowloris-dos) that got me thinking: Could Slowloris be written to work in the browser using XMLHTTPRequests? And if so, what a nefarious distributed attack! Consider if someone hosted minified/obfiscated Slowloris JavaScript code that ran silently in your browser whenever you visited their website (or better yet, a website that they infected to serve their malicious `.js` code). If such a site received heavy traffic, potentially thousands of clients could be connected at once, all DDoSing targets without their operator's knowledge (and without having infected their machines with a downloadable virus). Think browser as botnet.
+Over the course of learning about Slowloris I came across a [node.js implementation](https://github.com/timseverien/slowloris-dos) that got me thinking: Could Slowloris be written to work in the browser using XMLHTTPRequests? And if so, what a nefarious distributed attack! Consider if someone hosted minified/obfuscated Slowloris JavaScript code that ran silently in your browser whenever you visited their website (or better yet, a website that they infected to serve their malicious `.js` code). If such a site received heavy traffic, potentially thousands of clients could be connected at once, all DDoSing targets without their operator's knowledge (and without having infected their machines with a downloadable virus). Think browser as botnet.
 
 I haven't had a chance to test this theory yet but I hope to soon. If anyone else is interested in working on this, drop me a line. 
 
@@ -89,8 +89,8 @@ I haven't had a chance to test this theory yet but I hope to soon. If anyone els
 
 ### Defenses
 
-- [Detecting slow loris](https://serverfault.com/questions/32361/how-to-best-defend-against-a-slowloris-dos-attack-against-an-apache-web-server) (serverfault.com)
-- [Defense against slowloris](https://serverfault.com/questions/32361/how-to-best-defend-against-a-slowloris-dos-attack-against-an-apache-web-server) (serverfault.com)
+- [Detecting Slowloris](https://serverfault.com/questions/32361/how-to-best-defend-against-a-slowloris-dos-attack-against-an-apache-web-server) (serverfault.com)
+- [Defense against Slowloris](https://serverfault.com/questions/32361/how-to-best-defend-against-a-slowloris-dos-attack-against-an-apache-web-server) (serverfault.com)
 - [How To Mitigate Slow HTTP DoS Attacks in Apache HTTP Server](https://www.acunetix.com/blog/articles/slow-http-dos-attacks-mitigate-apache-http-server/) (acunetix.com)
 - [Slowloris DOS Mitigation Guide](http://www.funtoo.org/Slowloris_DOS_Mitigation_Guide) (funtoo.org)
 
